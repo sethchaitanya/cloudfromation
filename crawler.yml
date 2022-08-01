@@ -1,0 +1,130 @@
+Resources:
+  MyRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Retain
+    #test this policy for deletion of DB 
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        ['arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole']
+      Policies:
+        -
+          PolicyName: "S3BucketAccessPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action: 
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                Resource: 
+                  !Join
+                    - ''
+                    - - !GetAtt MyS3Bucket.Arn
+                      - "*"
+ 
+  MyDatabase:
+    Type: AWS::Glue::Database
+    DeletionPolicy: Retain
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: "dbcrawler"
+        Description: "TestDatabaseDescription"
+        LocationUri: "TestLocationUri"
+        Parameters:
+          key1 : "value1"
+          key2 : "value2"
+ 
+  MyClassifier:
+    Type: AWS::Glue::Classifier
+    Properties:
+      GrokClassifier:
+        Name: "CrawlerClassifier"
+        Classification: "wikiData"
+        GrokPattern: "%{NOTSPACE:language} %{NOTSPACE:page_title} %{NUMBER:hits:long} %{NUMBER:retrieved_size:long}"
+ 
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "crawlertesttargetadlasdhas"
+      AccessControl: "BucketOwnerFullControl"
+ 
+  MyCrawler2:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: "testcrawler134"
+      Role: !GetAtt MyRole.Arn
+      DatabaseName: !Ref MyDatabase
+      Classifiers:
+        - !Ref MyClassifier
+      Targets:
+        S3Targets:
+          - Path: !Ref MyS3Bucket
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "LOG"
+      Tags:
+        "Key1": "Value1"
+
+  # MyCrawler3:
+  #   Type: AWS::Glue::Crawler
+  #   Properties:
+  #     Name: "testcrawler121"
+  #     Role: !GetAtt MyRole.Arn
+  #     DatabaseName: !Ref MyDatabase
+  #     Classifiers:
+  #       - !Ref MyClassifier
+  #     Targets:
+  #       S3Targets:
+  #         - Path: !Ref MyS3Bucket
+  #     SchemaChangePolicy:
+  #       UpdateBehavior: "UPDATE_IN_DATABASE"
+  #       DeleteBehavior: "LOG"
+  #     Tags:
+  #       "Key1": "Value1"
+
+  # MyCrawler4:
+  #   Type: AWS::Glue::Crawler
+  #   Properties:
+  #     Name: "testcrawler1214"
+  #     Role: !GetAtt MyRole.Arn
+  #     DatabaseName: !Ref MyDatabase
+  #     Classifiers:
+  #       - !Ref MyClassifier
+  #     Targets:
+  #       S3Targets:
+  #         - Path: !Ref MyS3Bucket
+  #     SchemaChangePolicy:
+  #       UpdateBehavior: "UPDATE_IN_DATABASE"
+  #       DeleteBehavior: "LOG"
+  #     Tags:
+  #       "Key1": "Value1"
+
+  # MyCrawler5:
+  #   Type: AWS::Glue::Crawler
+  #   Properties:
+  #     Name: "testcrawler12156"
+  #     Role: !GetAtt MyRole.Arn
+  #     DatabaseName: !Ref MyDatabase
+  #     Classifiers:
+  #       - !Ref MyClassifier
+  #     Targets:
+  #       S3Targets:
+  #         - Path: !Ref MyS3Bucket
+  #     SchemaChangePolicy:
+  #       UpdateBehavior: "UPDATE_IN_DATABASE"
+  #       DeleteBehavior: "LOG"
+  #     Tags:
+  #       "Key1": "Value1"

@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  AMI:
+    Type: String
+    Default: ami-085284d24fe829cd0
+    Description: The Linux AMI to use.
+Resources:
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref Linux
+  Linux:
+      Type: 'AWS::EC2::Instance'
+      Properties:
+        SubnetId: subnet-04f9b3a58e544c890
+        ImageId: ami-082ccf4cbcda7b2b4
+        InstanceType: t2.micro 
+        KeyName: kube
+        IamInstanceProfile: AmazonSSMRoleForInstancesQuickSetup
+        SecurityGroupIds: 
+          - sg-0b855ad91ddde4e7d
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs:
+              VolumeSize: 250
+        Tags: 
+         - Key: Name 
+           Value: 
+            Fn::Join:
+             - '-'
+             -  - intl 
+                - prod 
+         - Key: Env 
+           Value: prod           
+Outputs:
+    PublicIp:
+      Value:
+        Fn::GetAtt:
+          - Linux
+          - PublicIp
+      Description: Server's PublicIp Address

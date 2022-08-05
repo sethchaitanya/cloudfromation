@@ -14,7 +14,7 @@ Resources:
       Type: 'AWS::EC2::Instance'
       Properties:
         SubnetId: subnet-04f9b3a58e544c890
-        ImageId: ami-082ccf4cbcda7b2b4
+        ImageId: ami-01154c8b2e9a14885
         InstanceType: t2.micro 
         KeyName: kube
         IamInstanceProfile: AmazonSSMRoleForInstancesQuickSetup

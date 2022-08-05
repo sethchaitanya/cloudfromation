@@ -26,11 +26,11 @@ Resources:
               VolumeSize: 250
         Tags: 
          - Key: Name 
-           Value: 
-            Fn::Join:
-             - '-'
-             -  - intl 
-                - prod 
+           Value: CodeDeploy
+            # Fn::Join:
+            #  - '-'
+            #  -  - intl 
+            #     - prod 
          - Key: Env 
            Value: prod           
 Outputs:

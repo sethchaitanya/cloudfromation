@@ -17,13 +17,21 @@ Resources:
         ImageId: ami-0e4d9ed95865f3b40
         InstanceType: t2.micro 
         KeyName: kube
-        IamInstanceProfile: AmazonSSMRoleForInstancesQuickSetup
+        IamInstanceProfile: EC2InstanceRole
         SecurityGroupIds: 
           - sg-0b855ad91ddde4e7d
         BlockDeviceMappings:
           - DeviceName: /dev/xvda
             Ebs:
               VolumeSize: 250
+        UserData:
+         Fn::Base64: !Sub |
+            #!/bin/bash -xe
+            yum install -y ruby 
+            cd /opt
+            curl -O https://aws-codedeploy-us-east-2.s3.us-east-2.amazonaws.com/latest/install
+            chmod +x install
+            ./install auto
         Tags: 
          - Key: Name 
            Value: CodeDeploy

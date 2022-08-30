@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   AMI:
     Type: String
-    Default: ami-085284d24fe829cd0
+    Default: ami-0e4d9ed95865f3b40
     Description: The Linux AMI to use.
 Resources:
   ElasticIP:
@@ -14,23 +14,31 @@ Resources:
       Type: 'AWS::EC2::Instance'
       Properties:
         SubnetId: subnet-04f9b3a58e544c890
-        ImageId: ami-01154c8b2e9a14885
+        ImageId: ami-0e4d9ed95865f3b40
         InstanceType: t2.micro 
         KeyName: kube
-        IamInstanceProfile: AmazonSSMRoleForInstancesQuickSetup
+        IamInstanceProfile: EC2InstanceRole
         SecurityGroupIds: 
           - sg-0b855ad91ddde4e7d
         BlockDeviceMappings:
           - DeviceName: /dev/xvda
             Ebs:
               VolumeSize: 250
+        UserData:
+         Fn::Base64: !Sub |
+            #!/bin/bash -xe
+            yum install -y ruby 
+            cd /opt
+            curl -O https://aws-codedeploy-us-east-2.s3.us-east-2.amazonaws.com/latest/install
+            chmod +x install
+            ./install auto
         Tags: 
          - Key: Name 
-           Value: 
-            Fn::Join:
-             - '-'
-             -  - intl 
-                - prod 
+           Value: CodeDeploy
+            # Fn::Join:
+            #  - '-'
+            #  -  - intl 
+            #     - prod 
          - Key: Env 
            Value: prod           
 Outputs:
